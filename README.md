@@ -15,7 +15,7 @@ Built for a technical assessment with an 8-hour scope, using a Python
 | | |
 |---|---|
 | **Live app** | `<add your deployed URL here, e.g. https://listy.onrender.com>` |
-| **Repository** | `<add your GitHub repo URL here>` |
+| **Repository** | `https://github.com/Debugger-NaN/Voice-command-shopping-assistant` |
 
 ---
 
