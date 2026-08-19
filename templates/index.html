@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listy — Voice Shopping Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===================== LEFT: voice console ===================== -->
+  <section class="console">
+    <div class="brand">
+      <span class="brand-mark">＊</span>
+      <h1>Listy</h1>
+    </div>
+    <p class="tagline">Say what you need. It lands on the list.</p>
+
+    <div class="lang-row">
+      <label for="lang-select">Listening in</label>
+      <select id="lang-select">
+        <option value="en-US">English</option>
+        <option value="es-ES">Español</option>
+        <option value="hi-IN">हिन्दी</option>
+        <option value="fr-FR">Français</option>
+      </select>
+    </div>
+
+    <div class="mic-wrap">
+      <button id="mic-btn" class="mic-btn" aria-label="Start voice command">
+        <span class="ring r1"></span>
+        <span class="ring r2"></span>
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+          <path d="M12 18v4M9 22h6"/>
+        </svg>
+      </button>
+      <p id="mic-status" class="mic-status">Tap to speak</p>
+    </div>
+
+    <div class="transcript-box">
+      <div class="transcript-label">Heard</div>
+      <p id="transcript" class="transcript">—</p>
+    </div>
+
+    <div id="feedback" class="feedback" aria-live="polite"></div>
+
+    <div class="examples">
+      <div class="examples-label">Try saying</div>
+      <ul>
+        <li>“Add two bottles of water”</li>
+        <li>“I need apples”</li>
+        <li>“Remove milk from my list”</li>
+        <li>“Find toothpaste under $5”</li>
+      </ul>
+    </div>
+
+    <form id="type-form" class="type-form">
+      <input id="type-input" type="text" placeholder="…or type a command" autocomplete="off">
+      <button type="submit">Send</button>
+    </form>
+  </section>
+
+  <!-- ===================== RIGHT: receipt ===================== -->
+  <section class="receipt-pane">
+    <div class="receipt">
+      <div class="receipt-top"></div>
+      <div class="receipt-header">
+        <h2>Shopping List</h2>
+        <span id="receipt-date"></span>
+      </div>
+      <div id="list-body" class="receipt-body">
+        <p class="empty-state">Your list is empty. Say “add milk” to start.</p>
+      </div>
+      <div class="receipt-divider">– – – – – – – – – – – – – – – – – –</div>
+      <div id="suggestions" class="suggestions"></div>
+      <div class="receipt-bottom"></div>
+    </div>
+  </section>
+
+</div>
+
+<div id="search-modal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="search-title">Search results</h3>
+      <button id="search-close" aria-label="Close">×</button>
+    </div>
+    <div id="search-results" class="search-results"></div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
