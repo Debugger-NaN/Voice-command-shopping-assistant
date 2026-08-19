@@ -1,110 +1,315 @@
-# Listy — Voice Command Shopping Assistant
+# 🛒 Listy — Voice Command Shopping Assistant
 
-A voice-first shopping list manager: speak naturally, and it adds, removes,
-searches, and suggests items for you. Built as a Python web app (Flask +
-vanilla JS) per the assignment's technical scope and an 8-hour time budget.
+A voice-first shopping list manager. Speak naturally — "Add milk," "I need
+apples," "Find toothpaste under $5" — and Listy parses the intent,
+manages your list, and surfaces smart suggestions, entirely through a
+browser-based voice interface.
 
-## Live demo / repo
-- App URL: _add your deployed URL here after hosting (see **Deploying** below)_
-- Repo: _add your GitHub URL here_
+Built for a technical assessment with an 8-hour scope, using a Python
+(Flask) backend and vanilla JavaScript frontend, with zero paid APIs.
 
-## Features implemented
+---
 
-| Area | What's implemented |
+## 🔗 Live demo & repo
+
+| | |
 |---|---|
-| Voice input | Browser-native Web Speech API captures speech; flexible phrasing handled by a regex/keyword NLP layer (`nlp_engine.py`) — "Add milk", "I need apples", "I want to buy bananas" all resolve to the same intent. |
-| Multilingual | Language selector (English, Spanish, Hindi, French) switches the recognizer's language; trigger-phrase keyword sets exist for all four so the same intents are recognized across languages. |
-| Smart suggestions | "You usually buy" (based on stored add-history), "In season" (calendar-based seasonal table), and per-item substitute suggestions (e.g. adding milk surfaces almond/soy/oat milk). |
-| List management | Add / remove / update quantity, all voice- or text-driven; items are auto-categorized (Dairy, Produce, Bakery, etc.) via a keyword map. |
-| Quantity parsing | Handles both digits and spoken number words: "2 bottles of water" and "two bottles of water" both parse to `quantity=2, unit=bottles`. |
-| Voice-activated search | "Find toothpaste under $5" / "Find me organic apples" queries a mock product catalog by name, brand, and price ceiling, shown in a results modal. |
-| UI/UX | Minimalist two-pane layout: voice console + a list rendered as a paper "receipt". Live transcript feedback, listening-state animation, loading/empty states, mobile-responsive down to one column. |
-| Error handling | Unrecognized commands get an explicit, helpful message instead of failing silently; mic permission/browser-support errors are surfaced in the UI; a text-input fallback exists for unsupported browsers or noisy environments. |
+| **Live app** | `<add your deployed URL here, e.g. https://listy.onrender.com>` |
+| **Repository** | `<add your GitHub repo URL here>` |
 
-## Architecture
+---
+
+## 📸 What it looks like
+
+The interface is split into two panels:
+- **Left — the voice console**: a mic button, live transcript of what was
+  heard, a language selector, and a text-input fallback.
+- **Right — the list**: rendered as a torn-paper "receipt," with items
+  grouped by category and "you might need" / "in season" suggestion chips
+  at the bottom.
+
+---
+
+## ✅ Feature checklist (mapped to the assignment brief)
+
+### 1. Voice Input
+- [x] **Voice command recognition** — via the browser's native Web Speech API.
+- [x] **Flexible phrasing (NLP)** — a custom parser understands "Add milk",
+  "I need apples", "I want to buy bananas" as the same intent.
+- [x] **Multilingual support** — recognizer language switch (English,
+  Spanish, Hindi, French) with trigger-phrase keyword sets per language.
+
+### 2. Smart Suggestions
+- [x] **Product recommendations** — "You usually buy" chips, generated from
+  a persisted add-history table (most-frequently-added items not currently
+  on your list).
+- [x] **Seasonal recommendations** — a calendar-based table suggests
+  in-season produce for the current month.
+- [x] **Substitutes** — adding an item like milk surfaces alternatives
+  (almond milk, soy milk, oat milk) inline in the response.
+
+### 3. Shopping List Management
+- [x] **Add / remove / modify items** by voice or typed text.
+- [x] **Auto-categorization** — items are sorted into Dairy, Produce,
+  Bakery, Meat & Seafood, Snacks, Beverages, Pantry, Household, Other.
+- [x] **Quantity management** — parses both digit and spoken-word
+  quantities ("2 bottles of water" and "two bottles of water" both work),
+  plus units (bottles, kg, dozen, packs, etc.).
+
+### 4. Voice-Activated Search
+- [x] **Item search** by name, e.g. "Find me organic apples."
+- [x] **Price range filtering** — "Find toothpaste under $5" filters a
+  mock product catalog by price ceiling.
+- [x] **Brand filtering** — recognizes known brand names in the query.
+
+### 11. UI/UX
+- [x] **Minimalist interface** with a clear, single-purpose layout.
+- [x] **Visual feedback** — live transcript, listening-state animation,
+  inline confirmation messages, animated "printing" of new list items.
+- [x] **Mobile-friendly** — responsive down to a single column; the voice
+  flow works the same on mobile Chrome.
+
+### 12. Hosting
+- [x] Deployable as-is to any Python-friendly free host (Render, Railway,
+  Fly.io, PythonAnywhere) — see [Deployment](#-deployment) below.
+
+---
+
+## 🧱 Tech stack
+
+| Layer | Choice | Why |
+|---|---|---|
+| Backend | Python 3 + Flask | Lightweight, minimal boilerplate, easy to deploy anywhere. |
+| Voice capture | Browser Web Speech API | Free, built into Chrome/Edge, no API key, runs client-side. |
+| NLP / intent parsing | Custom regex + keyword engine (`nlp_engine.py`) | Transparent, instant, zero external dependency or cold-start latency. |
+| Storage | SQLite | Zero-config, file-based, perfect for a single-user demo/assessment. |
+| Frontend | Vanilla HTML/CSS/JS | No build step, no framework overhead, fast to load. |
+| Fonts | Fraunces, IBM Plex Mono, Inter | Display serif + "receipt printer" mono + clean UI sans. |
+
+No paid AI/ML services are used anywhere in the stack.
+
+---
+
+## 🗂️ Project structure
 
 ```
-templates/index.html    single-page UI (voice console + receipt list)
-static/css/style.css    design system (see "Design" below)
-static/js/app.js        Web Speech API capture, fetches, rendering
-app.py                  Flask routes (list, command, suggestions, search)
-nlp_engine.py           regex/keyword command parser (no external NLP dep)
-catalog.py              category map, seasonal table, substitutes, mock products
-shopping.db             SQLite, created automatically on first run
+voice-shopping-assistant/
+├── app.py                 # Flask routes: list, command, suggestions, search
+├── nlp_engine.py           # Regex/keyword intent parser (the "NLP" layer)
+├── catalog.py               # Category map, seasonal table, substitutes, mock products
+├── requirements.txt         # Flask + gunicorn (only 2 dependencies)
+├── templates/
+│   └── index.html          # Single-page UI
+├── static/
+│   ├── css/style.css        # Design system (see Design section)
+│   └── js/app.js            # Speech capture, API calls, DOM rendering
+├── README.md
+├── WRITEUP.md               # 200-word approach write-up (assignment deliverable)
+└── .gitignore
 ```
 
-**Why this stack:** the assignment allows any framework and any free-tier
-AI/ML service. Rather than wiring in a paid NLP or speech API, this uses two
-things that are free and instant everywhere:
-1. The **Web Speech API**, built into Chrome/Edge, for actual speech-to-text
-   — zero setup, zero API key, runs entirely client-side.
-2. A **hand-written intent parser** for turning that transcript into
-   add/remove/search actions. It's transparent, has no cold-start latency,
-   and is easy to extend with new phrasings or languages by adding to the
-   keyword lists in `nlp_engine.py`.
+---
 
-**Honest limitation:** multilingual support here is *keyword-based*, not a
-true translation layer — it recognizes trigger phrases in four languages,
-but item names beyond that aren't translated. A production version would
-add a translation API (e.g. Google Translate) between the recognizer and
-the parser so any language's item names normalize to a canonical list.
+## 🧠 How the NLP engine works
 
-## Running locally
+`nlp_engine.py` turns a raw transcript into a structured intent without any
+external NLP library:
+
+```python
+parse_command("Add two bottles of water")
+# -> {
+#      "action": "add",
+#      "item": "water",
+#      "quantity": 2,
+#      "unit": "bottles",
+#      "max_price": None,
+#      "brand": None,
+#      "raw": "Add two bottles of water"
+#    }
+```
+
+**Pipeline:**
+1. **Price extraction** — regex matches "under $X" / "less than $X" and
+   strips it from the text before further parsing.
+2. **Brand detection** — checks the transcript against a known-brands list.
+3. **Intent detection** — matches the longest trigger phrase from
+   multilingual keyword lists (`ADD_TRIGGERS`, `REMOVE_TRIGGERS`,
+   `SEARCH_TRIGGERS`) so "I want to buy" correctly wins over the shorter
+   "I want".
+4. **Quantity + unit extraction** — a regex pulls a leading number (digit
+   or spoken word — "two" is normalized to `2`) and an optional unit
+   (bottles, kg, dozen, packs, etc.) from the remaining text.
+5. **Fallback** — if no trigger phrase is found, the whole utterance is
+   treated as an implicit "add" (so just saying "milk" works).
+
+This keeps the whole NLP layer inspectable in one file — extending it to a
+new phrase or language is just adding a string to a list.
+
+---
+
+## 🔌 API reference
+
+All endpoints return JSON.
+
+### `GET /api/list`
+Returns the current shopping list.
+```json
+[
+  {"id": 1, "name": "milk", "category": "Dairy", "quantity": 1, "unit": null, "added_at": "2026-08-20T10:00:00"}
+]
+```
+
+### `POST /api/command`
+Parses and executes a voice/text command.
+**Request:**
+```json
+{ "text": "Add two bottles of water" }
+```
+**Response:**
+```json
+{
+  "action": "add",
+  "item": "water",
+  "category": "Beverages",
+  "quantity": 2,
+  "message": "Added 2 bottles water",
+  "substitutes": [],
+  "list": [ /* full updated list */ ]
+}
+```
+For a `search` action, the response includes a `results` array of matched
+products (name, brand, size, price) instead of updating the list.
+
+### `PATCH /api/item/<id>`
+Updates an item's quantity.
+```json
+{ "quantity": 3 }
+```
+
+### `DELETE /api/item/<id>`
+Removes an item from the list.
+
+### `GET /api/suggestions`
+Returns "you usually buy" and "in season" suggestion chips.
+```json
+{
+  "frequent": [{"name": "bread", "times_added": 4}],
+  "seasonal": ["grapes", "corn", "tomatoes"]
+}
+```
+
+### `GET /api/search?q=&max_price=&brand=`
+Direct product search (used internally by voice search, also usable
+standalone).
+
+---
+
+## 💻 Running locally
 
 ```bash
-python3 -m venv venv && source venv/bin/activate   # optional but recommended
+git clone <your-repo-url>
+cd voice-shopping-assistant
+
+python -m venv venv
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # macOS/Linux
+
 pip install -r requirements.txt
-python3 app.py
+python app.py
 ```
 
-Open `http://localhost:5000`. Click the mic, allow microphone access, and
-speak. (Voice recognition requires Chrome or Edge; other browsers fall back
-to the text box at the bottom of the console panel.)
+Open **http://localhost:5000** in **Chrome or Edge** (the Web Speech API
+isn't supported in Firefox or Safari). Click the mic, allow microphone
+access, and speak — or use the text box at the bottom of the console panel.
 
-## Deploying (per the "reliable platform" requirement)
+> **Note on microphone access:** the Web Speech API only works on secure
+> origins. `localhost` is treated as secure automatically, but accessing
+> the app via a raw IP address (e.g. `192.168.x.x:5000`) will be blocked by
+> the browser with a `not-allowed` error. Use `localhost` for local testing,
+> or deploy to get a real `https://` URL.
 
-The app is a standard Flask app with a `requirements.txt` and no
-platform-specific code, so it deploys as-is to any of these free tiers:
+---
 
-**Render (recommended, free tier, ~2 minutes):**
-1. Push this repo to GitHub.
-2. On [render.com](https://render.com) → New → Web Service → connect the repo.
+## 🚀 Deployment
+
+The app is a standard Flask app with no platform-specific code, so it
+deploys to any Python host. **Render** (free tier) is the simplest option
+and gives you a real HTTPS URL, which is required for the mic to work in
+production.
+
+1. Push this repo to GitHub (public, `main` branch).
+2. On [render.com](https://render.com) → **New** → **Web Service** → connect
+   the repo.
 3. Build command: `pip install -r requirements.txt`
 4. Start command: `gunicorn app:app`
-5. Deploy — Render gives you a public HTTPS URL. Voice input needs HTTPS,
-   which Render provides by default.
+5. Instance type: **Free**
+6. Deploy — Render provisions an `https://your-app.onrender.com` URL
+   automatically.
 
-**Alternative — Railway / PythonAnywhere / Fly.io:** same idea — install
-`requirements.txt`, run `gunicorn app:app` (or `python app.py` for a quick
-test), and use the platform's free HTTPS URL.
+Alternative free hosts that work the same way: Railway, Fly.io,
+PythonAnywhere.
 
-> Note: this repository contains the working code, but does not include a
-> live deployment, since that requires an account on the hosting platform.
-> Follow the steps above to get a public URL for submission.
+> Free-tier note: Render's free instances sleep after ~15 minutes of
+> inactivity, so the first request after idling can take 30–60 seconds to
+> wake up. This is expected behavior, not a bug.
 
-## Design
+---
 
-The list is rendered as a torn paper "receipt" (perforated top/bottom
-edges) inside a dark evergreen console — items visually "print" onto the
-list as you add them. Fraunces (display serif) for headings, IBM Plex Mono
-for the receipt itself (a nod to real receipt printers), Inter for UI
-chrome. Palette: deep evergreen (`#0F1D17`) console, warm paper
-(`#FBF7EE`) receipt, mint (`#7FBF9E`) as the primary accent, gold
-(`#D8A93B`) for suggestions/seasonal items.
+## 🎨 Design
 
-## Testing notes
+The shopping list is rendered as a torn-paper receipt (perforated top and
+bottom edges, done with a CSS zigzag gradient) inside a dark evergreen
+console. New items animate in as if being "printed" onto the receipt.
 
-`nlp_engine.py` and `app.py` were exercised with the example phrases from
-the assignment brief ("Add milk", "I need apples", "I want to buy
-bananas", "Remove milk from my list", "Add 2 bottles of water" / "two
-bottles of water", "Find toothpaste under $5") — all resolve correctly.
-For a production submission, add `pytest` unit tests around
-`nlp_engine.parse_command`.
+**Palette:** deep evergreen `#0F1D17` (console) · warm paper `#FBF7EE`
+(receipt) · mint `#7FBF9E` (primary accent) · gold `#D8A93B`
+(suggestions/seasonal).
 
-## What I'd add with more time
+**Type:** Fraunces (display serif, headings) · IBM Plex Mono (the receipt
+itself, echoing a real receipt printer) · Inter (UI chrome/labels).
 
-- Real speech-to-text fallback (e.g. Whisper free tier) for browsers
-  without Web Speech API support.
-- A translation step for genuinely multilingual item names.
-- Persisted user accounts instead of a single shared list.
-- A real product/price API instead of the mock catalog.
+---
+
+## ⚠️ Known limitations & honest tradeoffs
+
+These are deliberate scope decisions given the free-tier / 8-hour
+constraint, documented here rather than hidden:
+
+- **Multilingual support is keyword-based, not translation-based.** The
+  recognizer switches listening language and trigger phrases are matched
+  in four languages, but item names themselves aren't translated to a
+  canonical form. A production version would insert a translation API
+  step between speech-to-text and intent parsing.
+- **Product catalog is mocked**, not a real inventory/pricing API — swap
+  `catalog.py`'s `PRODUCT_CATALOG` for a real product API call in
+  production.
+- **Single shared list, no accounts/auth** — fine for a demo, would need
+  a user model for multi-user use.
+- **Web Speech API browser support** — works in Chrome/Edge; Firefox and
+  Safari fall back to the text input.
+
+## 🔮 What I'd add with more time
+
+- A speech-to-text fallback (e.g. a free-tier Whisper endpoint) for
+  browsers without Web Speech API support.
+- A real translation layer for genuinely multilingual item names.
+- User accounts and persisted per-user lists.
+- A real product/pricing API instead of the mock catalog.
+- `pytest` unit tests around `nlp_engine.parse_command` for the full set
+  of example phrasings.
+
+---
+
+## 🧪 Testing notes
+
+`nlp_engine.parse_command` and the `/api/command` endpoint were manually
+verified against every example phrase in the assignment brief: "Add milk",
+"I need apples", "I want to buy bananas", "Remove milk from my list",
+"Add 2 bottles of water" / "two bottles of water", and "Find toothpaste
+under $5" — all resolve to the correct action, item, quantity, and filters.
+
+---
+
+## 📄 License
+
+Built as a technical assessment submission. Free to reference or adapt.
