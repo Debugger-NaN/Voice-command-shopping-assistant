@@ -14,7 +14,7 @@ Built for a technical assessment with an 8-hour scope, using a Python
 
 | | |
 |---|---|
-| **Live app** | `https://voice-command-shopping-assistant-avta.onrender.com/` |
+| **Live app** | `https://voice-command-shopping-assistant-avta.onrender.com` |
 | **Repository** | `https://github.com/Debugger-NaN/Voice-command-shopping-assistant` |
 
 ---
